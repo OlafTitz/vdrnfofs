@@ -34,5 +34,18 @@ class TestPathToNodeMapping(unittest.TestCase):
 
     def test_root(self):
         attr = self.fs.getattr('/')
-        self.assertEqual(stat.S_IFDIR | 0755, attr.st_mode)
+        self.assertEqual(stat.S_IFDIR | 0555, attr.st_mode)
         self.assertEqual(2 + 5, attr.st_nlink)
+
+    def test_dir(self):
+        attr = self.fs.getattr('/folder')
+        self.assertEqual(stat.S_IFDIR | 0555, attr.st_mode)
+        self.assertEqual(2 + 6, attr.st_nlink)
+
+    def test_mpg(self):
+        attr = self.fs.getattr('/sample_2008-03-28.20.13.99.99.rec.mpg')
+        self.assertEqual(stat.S_IFREG | 0444, attr.st_mode)
+
+    def test_nfo(self):
+        attr = self.fs.getattr('/sample_2008-03-28.20.13.99.99.rec.nfo')
+        self.assertEqual(stat.S_IFREG | 0444, attr.st_mode)

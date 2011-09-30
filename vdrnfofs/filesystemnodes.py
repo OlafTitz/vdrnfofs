@@ -64,7 +64,7 @@ class MpgNode:
 
     def get_stat(self):
         attr = NodeAttributes()
-        attr.st_mode = stat.S_IFREG | 644
+        attr.st_mode = stat.S_IFREG | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
         attr.st_nlink = 1
         attr.st_size = self.size()
         return attr
@@ -95,7 +95,7 @@ class NfoNode:
 
     def get_stat(self):
         attr = NodeAttributes()
-        attr.st_mode = stat.S_IFREG | 644
+        attr.st_mode = stat.S_IFREG | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
         attr.st_nlink = 1
         attr.st_size = self.size()
         return attr
@@ -131,6 +131,6 @@ class DirNode:
 
     def get_stat(self):
         attr = NodeAttributes()
-        attr.st_mode = stat.S_IFDIR | 0755
+        attr.st_mode = stat.S_IFDIR | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
         attr.st_nlink = 2 + len(self.content())
         return attr

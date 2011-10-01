@@ -1,1 +1,63 @@
-TODO
+vdrnfofs
+========
+
+Copyright 2010 Tobias Grimm <vdr@e-tobi.net>
+
+vdrnfos is released under the terms of the BSD License - see COPYRIGHT
+
+
+What's this about?
+------------------
+
+vdrnfofs creates a virtual Fuse-based file system that maps recordings
+from the Linux Video Disc Recorder (VDR) to *.nfo and *.mpg files.
+
+Those files can then e.g. used by media center applications like.
+XBMC or Enna.
+
+Such a thing has been tried previously here:
+
+  http://code.google.com/p/vdrfs/
+
+But this project seems to be abandoned, so I've rebuilt vdrnfofs from scratch.
+
+VDR recordings (PS or TS) are simply mapped 1:1 to *.mpg files. If the VDR recording
+is split to multiple files, they are virtually concatenated to a single *.mpg file.
+
+The *.nfo is a XML file with the follwing structure:
+
+  <movie>
+    <title>...</title>
+    <plot>...</plot>
+  </movie>
+
+Title and plot are mapped from VDR's info file ('T' and 'D').
+
+
+How to install?
+---------------
+
+In order to be able to use vdrnofs, python-fuse is required.
+
+If not installing from a package of your preferred Linux distribution run:
+
+  ./setup.py install
+
+The user which should be able to mount vdrnfofs should be a member of the 
+group "fuse".
+
+
+How to use?
+-----------
+
+To mount a vdrnfofs file system, run:
+
+  vdrnfofs <mount-point> -o video=<vdr-vide-dir>
+
+e.g.:
+
+   vdrnfofs /mnt/vdrnfofs -o video=/var/lib/video
+
+You can also do this in /erc/fstab with:
+
+   vdrnfofs    /mnt/vdrnfofs   fuse    video=/var/lib/video 0 0

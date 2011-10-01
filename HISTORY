@@ -1,7 +1,9 @@
 version 0.0.7
+  - Fixed file/dir node permissions
   - Added README
   - BSD Licence
   - Added TODO and HISTORY
+  - Enable "./setup.py test" for running the tests
 
 version 0.0.6
   - inital release

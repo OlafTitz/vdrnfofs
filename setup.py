@@ -27,6 +27,7 @@ from distutils.core import setup
 from distutils.file_util import copy_file
 from distutils.command.build_py import build_py
 from distutils.command.install_data import install_data
+from setuptools import setup, find_packages
 
 from glob import glob
 from subprocess import check_call
@@ -37,7 +38,8 @@ setup (
     maintainer = "Tobias Grimm",
     maintainer_email = "vdr@e.tobi.net",
     description = "Access VDR recordings as mpg and nfo files",
-    license = "GNU GPL v2",
+    license = "BSD",
     scripts = ['bin/vdrnfofs'],
     packages = ['vdrnfofs'],
+    test_suite = "tests",
 )

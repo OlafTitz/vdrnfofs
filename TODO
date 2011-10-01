@@ -1,2 +1,3 @@
 - Add option for translating to samba friendly path names
   (especially ':')
+- Performance improvement - maybe caching the file system somehow

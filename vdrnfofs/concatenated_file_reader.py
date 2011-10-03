@@ -20,6 +20,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import os
+from cStringIO import StringIO
 
 class ConcatenatedFileReader:
     def __init__(self, filenames):
@@ -28,9 +29,9 @@ class ConcatenatedFileReader:
         self.current_file = None
 
     def read(self, offset, size):
-        buffer = ""
+        buffer = StringIO()
         ptr = offset
-        while (len(buffer) < size):
+        while (buffer.tell() < size):
             (filename, file_offset) = self.filename_from_offset(ptr)
             if filename:
                 if (self.current_filename != filename):
@@ -39,11 +40,11 @@ class ConcatenatedFileReader:
                     self.current_filename = filename
                     self.current_file = open(filename, 'r')
                 self.current_file.seek(file_offset)
-                buffer += self.current_file.read(size - len(buffer))
-                ptr = offset + len(buffer)
+                buffer.write(self.current_file.read(size - buffer.tell()))
+                ptr = offset + buffer.tell()
             else:
                 break
-        return buffer
+        return buffer.getvalue()
 
     def release(self):
         if self.current_file:

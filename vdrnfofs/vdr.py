@@ -23,10 +23,10 @@ class InfoVdr:
     def __init__(self, filename = None):
         self.values = {'T' : 'Unknown', 'D': 'No Description'}
         if filename:
-            file = open(filename, 'r')
-            for line in file:
-                line = line.rstrip("\r\n")
-                self.values[line[0]] = line[2:]
+            with open(filename, 'r') as file:
+                for line in file:
+                    line = line.rstrip("\r\n")
+                    self.values[line[0]] = line[2:]
 
     def __getitem__(self, key):
         return self.values[key] if self.values.has_key(key) else ''

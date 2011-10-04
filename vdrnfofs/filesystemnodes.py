@@ -32,6 +32,8 @@ import glob
 import os
 import fuse
 import stat
+import datetime
+import time
 
 from concatenated_file_reader import *
 from vdr import *
@@ -76,6 +78,8 @@ class MpgNode:
         attr.st_mode = stat.S_IFREG | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
         attr.st_nlink = 1
         attr.st_size = self.size()
+        timevalues = self.path.rsplit('/', 1)[1][:16].replace('.', '-').split('-')
+        attr.st_mtime = time.mktime(datetime.datetime(*[ int(s) for s in timevalues ]).timetuple())
         return attr
 
 
@@ -107,6 +111,8 @@ class NfoNode:
         attr.st_mode = stat.S_IFREG | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
         attr.st_nlink = 1
         attr.st_size = self.size()
+        timevalues = self.path.rsplit('/', 1)[1][:16].replace('.', '-').split('-')
+        attr.st_mtime = time.mktime(datetime.datetime(*[ int(s) for s in timevalues ]).timetuple())
         return attr
 
     def release(self):

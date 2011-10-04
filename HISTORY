@@ -2,6 +2,7 @@ version 0.8
   - Use cStringIO instead of string concatenation - about 3 times faster
     (Patch provided by Ed Hein)
   - Fixed license header in source files - it's the BSD licence now!
+  - Set mtime of file nodes to recording time (parsed from *.rec)
 
 version 0.7
   - Fixed file/dir node permissions

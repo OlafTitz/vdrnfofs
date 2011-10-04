@@ -32,6 +32,7 @@ import sys
 import os
 import unittest
 import stat
+import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -56,7 +57,14 @@ class TestPathToNodeMapping(unittest.TestCase):
     def test_mpg(self):
         attr = self.fs.getattr('/sample_2008-03-28.20.13.99.99.rec.mpg')
         self.assertEqual(stat.S_IFREG | 0444, attr.st_mode)
+        self.assertEqual(datetime.datetime(2008,3,28,20,13), datetime.datetime.fromtimestamp(attr.st_mtime))
 
     def test_nfo(self):
         attr = self.fs.getattr('/sample_2008-03-28.20.13.99.99.rec.nfo')
         self.assertEqual(stat.S_IFREG | 0444, attr.st_mode)
+        self.assertEqual(datetime.datetime(2008,3,28,20,13), datetime.datetime.fromtimestamp(attr.st_mtime))
+
+    def test_nfo_new(self):
+        attr = self.fs.getattr('/sample-vdr1.7_2008-03-28.20.13.10-1.rec.nfo')
+        self.assertEqual(stat.S_IFREG | 0444, attr.st_mode)
+        self.assertEqual(datetime.datetime(2008,3,28,20,13), datetime.datetime.fromtimestamp(attr.st_mtime))

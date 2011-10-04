@@ -105,7 +105,7 @@ class VdrNfoFs(fuse.Fuse):
                 return node.get_stat()
             return -errno.ENOENT
         except:
-            syslog.syslog('VdrFuseFs: Unexpected error for getattr(%s): %s' % path)
+            syslog.syslog('VdrFuseFs: Unexpected error for getattr(%s)' % path)
 
     def readdir(self, path, offset):
         try:

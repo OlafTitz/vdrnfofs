@@ -52,7 +52,7 @@ class TestNfo(unittest.TestCase):
         self.assertEqual('A movie about something', nfo.find('plot').text)
 
     def test_nfo_new(self):
-        node = get_node(self.video, '/sample-vdr1.7_2008-03-28.20.13.99.99.rec.nfo')
+        node = get_node(self.video, '/sample-vdr1.7_2008-03-28.20.13.10-1.rec.nfo')
         nfo = xml.etree.ElementTree.fromstring(node.read(0, 4096))
         self.assertEqual('Movie Title', nfo.find('title').text)
         self.assertEqual('A movie about something', nfo.find('plot').text)

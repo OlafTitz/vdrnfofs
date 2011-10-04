@@ -3,6 +3,7 @@ version 0.8
     (Patch provided by Ed Hein)
   - Fixed license header in source files - it's the BSD licence now!
   - Set mtime of file nodes to recording time (parsed from *.rec)
+  - Added homepage http://projects.vdr-developer.org/projects/vdrnfofs
 
 version 0.7
   - Fixed file/dir node permissions

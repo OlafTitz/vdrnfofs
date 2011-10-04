@@ -39,7 +39,8 @@ Title and plot are mapped from VDR's info file ('T' and 'D').
 How to install?
 ---------------
 
-In order to be able to use vdrnofs, python-fuse is required.
+In order to be able to use vdrnofs, python-setuptools and python-fuse are
+required.
 
 If not installing from a package of your preferred Linux distribution run:
 

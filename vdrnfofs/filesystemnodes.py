@@ -69,7 +69,7 @@ class MpgNode:
          return self.reader.read(offset, size)
 
     def release(self):
-         return self.reader.release()
+         self.reader.release()
 
     def get_stat(self):
         attr = NodeAttributes()
@@ -109,6 +109,8 @@ class NfoNode:
         attr.st_size = self.size()
         return attr
 
+    def release(self):
+         return
 
 class DirNode:
     def __init__(self, path):

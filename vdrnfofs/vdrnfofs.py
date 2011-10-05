@@ -33,13 +33,22 @@ import stat
 import errno
 import sys
 import fuse
-import syslog
+import traceback
+import logging
 
 from concatenated_file_reader import *
 from vdr import *
 from filesystemnodes import *
 
 fuse.fuse_python_api = (0, 2)
+
+def format_exception_info(level = 6):
+    error_type, error_value, trbk = sys.exc_info()
+    tb_list = traceback.format_tb(trbk, level)    
+    s = "Error: %s \nDescription: %s \nTraceback:" % (error_type.__name__, error_value)
+    for i in tb_list:
+        s += "\n" + i
+    return s
 
 def get_node(video, path):
     virtual_path, virtual_file_extension = os.path.splitext(path)
@@ -69,7 +78,7 @@ class VdrNfoFsFile:
                 return -errno.ENOENT
             return self.node.read(offset, size)
         except:
-            syslog.syslog('VdrFuseFs: Unexpected error for read(%s)' % self.path)
+            logging.error('VdrFuseFs: Unexpected error for read(%s): %s, %s' % (self.path, format_exception_info()))
 
     def release(self, flags):
         self.node.release()
@@ -96,7 +105,9 @@ class VdrNfoFsFile:
 class VdrNfoFs(fuse.Fuse):
     def __init__(self, *args, **kw):
         fuse.Fuse.__init__(self, *args, **kw)
-        self.video = ""
+        self.video = ''
+        self.log = ''
+        self.loglevel = 'info'
 
     def getattr(self, path):
         try:
@@ -105,7 +116,7 @@ class VdrNfoFs(fuse.Fuse):
                 return node.get_stat()
             return -errno.ENOENT
         except:
-            syslog.syslog('VdrFuseFs: Unexpected error for getattr(%s)' % path)
+            logging.error('VdrFuseFs: Unexpected error for getattr(%s): %s' % (path, format_exception_info()))
 
     def readdir(self, path, offset):
         try:
@@ -116,9 +127,15 @@ class VdrNfoFs(fuse.Fuse):
                 for item in node.content():
                     yield fuse.Direntry(item.file_system_name)
         except:
-            syslog.syslog('VdrFuseFs: Unexpected error for readdir(%s)' % path)
+            logging.error('VdrFuseFs: Unexpected error for readdir(%s): %s' % (path, format_exception_info()))
 
     def main(self, *a, **kw):
+        if self.log and self.log != None:
+            logging.basicConfig(filename=self.log, level=getattr(logging, self.loglevel.upper()))
+        else:
+            logging.basicConfig(level=self.loglevel.upper())
+        logging.info('Starting vdrnfofs')
+
         VdrNfoFsFile.video_root = self.video
         self.file_class = VdrNfoFsFile
         return fuse.Fuse.main(self, *a, **kw)
@@ -131,6 +148,8 @@ def main():
 
     fs = VdrNfoFs(version=version,  usage=usage, dash_s_do='setsingle')
     fs.parser.add_option(mountopt="video", default='', help="The video directory containing the VDR recordings")
+    fs.parser.add_option(mountopt="log", default='', help="The log file (default = console)")
+    fs.parser.add_option(mountopt="loglevel", default='info', help="The log level (debug, info, warning or error)")
     fs.parse(values=fs, errex=1)
     fs.main()
 

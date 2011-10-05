@@ -147,6 +147,7 @@ def main():
     version = "%prog " + fuse.__version__
 
     fs = VdrNfoFs(version=version,  usage=usage, dash_s_do='setsingle')
+    fs.multithreaded = False
     fs.parser.add_option(mountopt="video", default='', help="The video directory containing the VDR recordings")
     fs.parser.add_option(mountopt="log", default='', help="The log file (default = console)")
     fs.parser.add_option(mountopt="loglevel", default='info', help="The log level (debug, info, warning or error)")

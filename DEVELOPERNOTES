@@ -1,0 +1,8 @@
+Fuse might call read(...) on the file class from multiple threads, causing
+a race condition with the underlying seek/read operations.
+
+Using locking here seems to make the file access slower, than just disabling
+the multithreading in Fuse with fs.multithreading = False.
+
+A thread-local storage doesn't help either, because Fuse doesn't seem to
+reuse threads, but might create new threads for each read operation.

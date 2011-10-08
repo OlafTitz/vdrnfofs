@@ -58,7 +58,7 @@ class MpgNode:
         if not self.mpeg_files:
             self.mpeg_files = glob.glob(path + '/[0-9]*.ts')
         self.mpeg_files.sort()
-        self.file_system_name = os.path.basename(os.path.abspath(path + '/..')) + '_' + os.path.basename(path) + '.mpg'
+        self.file_system_name = '_'.join(path.rsplit('/', 3)[-2:]) + '.mpg'
         self.reader = ConcatenatedFileReader(self.mpeg_files)
 
     def size(self):
@@ -86,7 +86,7 @@ class MpgNode:
 class NfoNode:
     def __init__(self, path):
         self.path = path
-        self.file_system_name = os.path.basename(os.path.abspath(path + '/..')) + '_' + os.path.basename(path) + '.nfo'
+        self.file_system_name = '_'.join(path.rsplit('/', 3)[-2:]) + '.nfo'
         if os.path.exists(path + '/info.vdr'):
             info_vdr = InfoVdr(path + '/info.vdr')
         elif os.path.exists(path + '/info'):
@@ -121,7 +121,7 @@ class NfoNode:
 class DirNode:
     def __init__(self, path):
         self.path = path
-        self.file_system_name = os.path.basename(path)
+        self.file_system_name = path.rsplit('/',1)[1]
         self.cache = []
 
     def content(self):

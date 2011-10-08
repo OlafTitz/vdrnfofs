@@ -44,18 +44,15 @@ fuse.fuse_python_api = (0, 2)
 
 def format_exception_info(level = 6):
     error_type, error_value, trbk = sys.exc_info()
-    tb_list = traceback.format_tb(trbk, level)    
-    s = "Error: %s \nDescription: %s \nTraceback:" % (error_type.__name__, error_value)
-    for i in tb_list:
-        s += "\n" + i
-    return s
+    tb_list = traceback.format_tb(trbk, level)
+    return 'Error: %s \nDescription: %s \nTraceback: %s' % (error_type.__name__, error_value, '\n'.join(tb_list))
 
 def get_node(video, path):
     virtual_path, virtual_file_extension = os.path.splitext(path)
     if virtual_file_extension in ['.mpg', '.nfo']:
         p = virtual_path.rfind('_')
         if p > 0:
-            video_path = video + '/' + virtual_path[0:p] + '/' + virtual_path[p+1:]
+            video_path = '/'.join((video, virtual_path[0:p], virtual_path[p+1:]))
             if not os.path.isdir(video_path):
                return None
             elif virtual_file_extension == '.mpg':
@@ -63,8 +60,9 @@ def get_node(video, path):
             elif virtual_file_extension == '.nfo':
                 return NfoNode(video_path)
     else:
-        if os.path.isdir(video + '/' + path):
-            return DirNode(video + path)
+        dir = video + '/' + path
+        if os.path.isdir(dir):
+            return DirNode(dir)
     return None
 
 class VdrNfoFsFile:

@@ -52,7 +52,7 @@ def get_node(video, path):
     if virtual_file_extension in ['.mpg', '.nfo']:
         p = virtual_path.rfind('_')
         if p > 0:
-            video_path = '/'.join((video, virtual_path[0:p], virtual_path[p+1:]))
+            video_path = '/'.join((video, virtual_path[1:p], virtual_path[p+1:]))
             if not os.path.isdir(video_path):
                return None
             elif virtual_file_extension == '.mpg':
@@ -60,7 +60,7 @@ def get_node(video, path):
             elif virtual_file_extension == '.nfo':
                 return NfoNode(video_path)
     else:
-        dir = video + '/' + path
+        dir = video + path
         if os.path.isdir(dir):
             return DirNode(dir)
     return None

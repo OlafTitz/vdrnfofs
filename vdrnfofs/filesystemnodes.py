@@ -53,7 +53,7 @@ class NodeAttributes(fuse.Stat):
 
 class MpgNode:
     def __init__(self, path):
-        self.path = os.path.normpath(path)
+        self.path = path
         self.mpeg_files = glob.glob(path + '/[0-9]*.vdr')
         if not self.mpeg_files:
             self.mpeg_files = glob.glob(path + '/[0-9]*.ts')
@@ -85,7 +85,7 @@ class MpgNode:
 
 class NfoNode:
     def __init__(self, path):
-        self.path = os.path.normpath(path)
+        self.path = path
         self.file_system_name = os.path.basename(os.path.abspath(path + '/..')) + '_' + os.path.basename(path) + '.nfo'
         if os.path.exists(path + '/info.vdr'):
             info_vdr = InfoVdr(path + '/info.vdr')
@@ -120,7 +120,7 @@ class NfoNode:
 
 class DirNode:
     def __init__(self, path):
-        self.path = os.path.normpath(path)
+        self.path = path
         self.file_system_name = os.path.basename(path)
         self.cache = []
 

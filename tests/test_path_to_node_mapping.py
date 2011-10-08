@@ -38,12 +38,12 @@ from vdrnfofs.vdrnfofs import *
 
 class TestPathToNodeMapping(unittest.TestCase):
     def setUp(self):
-        self.video = self.video_dir = os.path.abspath(os.path.dirname(__file__) + '/sample_video_dir')
+        self.video = os.path.abspath(os.path.dirname(__file__) + '/sample_video_dir')
 
     def test_root(self):
         node = get_node(self.video, '/')
         self.assertEqual('', node.file_system_name)
-        self.assertEqual(self.video, node.path)
+        self.assertEqual(self.video + '/', node.path)
 
     def test_subdir(self):
         node = get_node(self.video, '/folder')

@@ -69,6 +69,8 @@ class VdrNfoFsFile:
     def __init__(self, path, flags, *mode):
         self.path = path
         self.node = get_node(VdrNfoFsFile.video_root, path)
+        self.keep_cache = True
+        self.direct_io = False
 
     def read(self, size, offset):
         try:

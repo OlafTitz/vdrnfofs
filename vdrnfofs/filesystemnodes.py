@@ -65,9 +65,9 @@ class MpgNode:
 
     def mpeg_files(self):
         if not self._mpeg_files:
-            self._mpeg_files = glob.glob(self.path + '/[0-9]*.vdr')
+            self._mpeg_files = glob.glob(self.path + '/[0-9]*.ts')
             if not self._mpeg_files:
-                self._mpeg_files = glob.glob(self.path + '/[0-9]*.ts')
+                self._mpeg_files = glob.glob(self.path + '/[0-9]*.vdr')
             self._mpeg_files.sort()
         return self._mpeg_files
 
@@ -112,12 +112,12 @@ class NfoNode:
 
     def nfo_content(self):
         if not self._nfo_content:
-            if os.path.exists(self.path + '/info.vdr'):
-                info_vdr = InfoVdr(self.path + '/info.vdr')
-            elif os.path.exists(self.path + '/info'):
-                info_vdr = InfoVdr(self.path + '/info')
-            else:
-               info_vdr = InfoVdr()
+            info_path = self.path + '/info'
+            if not os.path.exists(info_path):
+                info_path = self.path + '/info.vdr'
+                if not os.path.exists(info_path):
+                    info_path = None
+            info_vdr = InfoVdr(info_path)
             self._nfo_content = """<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <movie>
   <title>%s</title>

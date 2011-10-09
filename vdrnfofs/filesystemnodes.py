@@ -51,17 +51,31 @@ class NodeAttributes(fuse.Stat):
         self.st_mtime = 0
         self.st_ctime = 0
 
-class MpgNode:
-    def __init__(self, path):
+class FileNode(object):
+    def __init__(self, path, extension):
         self.path = path
         self._file_system_name = None
-        self._mpeg_files = None
-        self._reader = None
+        self.extension = extension
 
     def file_system_name(self):
         if not self._file_system_name:
-            self._file_system_name = '_'.join(self.path.rsplit('/', 3)[-2:]) + '.mpg'
+            self._file_system_name = '_'.join(self.path.rsplit('/', 3)[-2:]) + '.' + self.extension
         return self._file_system_name
+
+    def get_stat(self):
+        attr = NodeAttributes()
+        attr.st_mode = stat.S_IFREG | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
+        attr.st_nlink = 1
+        attr.st_size = self.size()
+        timevalues = self.path.rsplit('/', 1)[1][:16].replace('.', '-').split('-')
+        attr.st_mtime = time.mktime(datetime.datetime(*[ int(s) for s in timevalues ]).timetuple())
+        return attr
+
+class MpgNode(FileNode):
+    def __init__(self, path):
+        super(MpgNode, self).__init__(path, 'mpg')
+        self._mpeg_files = None
+        self._reader = None
 
     def mpeg_files(self):
         if not self._mpeg_files:
@@ -89,26 +103,11 @@ class MpgNode:
         if self._reader:
             self._reader.release()
 
-    def get_stat(self):
-        attr = NodeAttributes()
-        attr.st_mode = stat.S_IFREG | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
-        attr.st_nlink = 1
-        attr.st_size = self.size()
-        timevalues = self.path.rsplit('/', 1)[1][:16].replace('.', '-').split('-')
-        attr.st_mtime = time.mktime(datetime.datetime(*[ int(s) for s in timevalues ]).timetuple())
-        return attr
 
-
-class NfoNode:
+class NfoNode(FileNode):
     def __init__(self, path):
-        self._file_system_name = None
-        self.path = path
+        super(NfoNode, self).__init__(path, 'nfo')
         self._nfo_content = None
-
-    def file_system_name(self):
-        if not self._file_system_name:
-            self._file_system_name = '_'.join(self.path.rsplit('/', 3)[-2:]) + '.nfo'
-        return self._file_system_name
 
     def nfo_content(self):
         if not self._nfo_content:
@@ -132,17 +131,8 @@ class NfoNode:
     def read(self, offset, size):
        return self.nfo_content()[offset:offset+size]
 
-    def get_stat(self):
-        attr = NodeAttributes()
-        attr.st_mode = stat.S_IFREG | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
-        attr.st_nlink = 1
-        attr.st_size = self.size()
-        timevalues = self.path.rsplit('/', 1)[1][:16].replace('.', '-').split('-')
-        attr.st_mtime = time.mktime(datetime.datetime(*[ int(s) for s in timevalues ]).timetuple())
-        return attr
-
     def release(self):
-        return
+        pass
 
 class DirNode:
     def __init__(self, path):

@@ -39,6 +39,7 @@ import logging
 from concatenated_file_reader import *
 from vdr import *
 from filesystemnodes import *
+from nodecache import *
 
 fuse.fuse_python_api = (0, 2)
 
@@ -108,10 +109,11 @@ class VdrNfoFs(fuse.Fuse):
         self.video = ''
         self.log = ''
         self.loglevel = 'info'
+        self.cache = NodeCache()
 
     def getattr(self, path):
         try:
-            node = get_node(self.video, path)
+            node = self.cache.get(path, lambda x: get_node(self.video, x))
             if node:
                 return node.get_stat()
             return -errno.ENOENT
@@ -122,7 +124,7 @@ class VdrNfoFs(fuse.Fuse):
         try:
             yield fuse.Direntry('.')
             yield fuse.Direntry('..')
-            node = get_node(self.video, path)
+            node = self.cache.get(path, lambda x: get_node(self.video, x))
             if node:
                 for item in node.content():
                     yield fuse.Direntry(item.file_system_name())

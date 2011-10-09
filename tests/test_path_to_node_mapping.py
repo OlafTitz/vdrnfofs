@@ -42,15 +42,15 @@ class TestPathToNodeMapping(unittest.TestCase):
 
     def test_root(self):
         node = get_node(self.video, '/')
-        self.assertEqual('', node.file_system_name)
+        self.assertEqual('', node.file_system_name())
         self.assertEqual(self.video + '/', node.path)
 
     def test_subdir(self):
         node = get_node(self.video, '/folder')
-        self.assertEqual('folder', node.file_system_name)
+        self.assertEqual('folder', node.file_system_name())
         self.assertEqual(self.video + '/folder', node.path)
 
     def test_mpg(self):
         node = get_node(self.video, '/sample_2008-03-28.20.13.99.99.rec.mpg')
-        self.assertEqual('sample_2008-03-28.20.13.99.99.rec.mpg', node.file_system_name)
+        self.assertEqual('sample_2008-03-28.20.13.99.99.rec.mpg', node.file_system_name())
         self.assertEqual(self.video + '/sample/2008-03-28.20.13.99.99.rec', node.path)

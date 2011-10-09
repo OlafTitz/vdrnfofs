@@ -47,11 +47,13 @@ class TestMpg(unittest.TestCase):
 
     def test_mpg(self):
         node = get_node(self.video, '/sample_2008-03-28.20.13.99.99.rec.mpg')
+        self.assertEqual('sample_2008-03-28.20.13.99.99.rec.mpg', node.file_system_name())
         self.assertEqual(40, node.size())
         self.assertEqual('1234567890abcdefghij1234567890abcdefghij', node.read(0, 4096))
 
     def test_mpg_new(self):
         node = get_node(self.video, '/sample-vdr1.7_2008-03-28.20.13.10-1.rec.mpg')
+        self.assertEqual('sample-vdr1.7_2008-03-28.20.13.10-1.rec.mpg', node.file_system_name())
         self.assertEqual(40, node.size())
         self.assertEqual('1234567890abcdefghij1234567890abcdefghij', node.read(0, 4096))
 

@@ -123,7 +123,7 @@ class VdrNfoFs(fuse.Fuse):
             node = get_node(self.video, path)
             if node:
                 for item in node.content():
-                    yield fuse.Direntry(item.file_system_name)
+                    yield fuse.Direntry(item.file_system_name())
         except:
             logging.error('VdrFuseFs: Unexpected error for readdir(%s): %s' % (path, format_exception_info()))
 

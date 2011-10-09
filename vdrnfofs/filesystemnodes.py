@@ -54,24 +54,40 @@ class NodeAttributes(fuse.Stat):
 class MpgNode:
     def __init__(self, path):
         self.path = path
-        self.mpeg_files = glob.glob(path + '/[0-9]*.vdr')
-        if not self.mpeg_files:
-            self.mpeg_files = glob.glob(path + '/[0-9]*.ts')
-        self.mpeg_files.sort()
-        self.file_system_name = '_'.join(path.rsplit('/', 3)[-2:]) + '.mpg'
-        self.reader = ConcatenatedFileReader(self.mpeg_files)
+        self._file_system_name = None
+        self._mpeg_files = None
+        self._reader = None
+
+    def file_system_name(self):
+        if not self._file_system_name:
+            self._file_system_name = '_'.join(self.path.rsplit('/', 3)[-2:]) + '.mpg'
+        return self._file_system_name
+
+    def mpeg_files(self):
+        if not self._mpeg_files:
+            self._mpeg_files = glob.glob(self.path + '/[0-9]*.vdr')
+            if not self._mpeg_files:
+                self._mpeg_files = glob.glob(self.path + '/[0-9]*.ts')
+            self._mpeg_files.sort()
+        return self._mpeg_files
+
+    def reader(self):
+        if not self._reader:
+            self._reader = ConcatenatedFileReader(self.mpeg_files())
+        return self._reader
 
     def size(self):
         size = 0
-        for file in self.mpeg_files:
+        for file in self.mpeg_files():
             size += os.path.getsize(file)
         return size
 
     def read(self, offset, size):
-        return self.reader.read(offset, size)
+        return self.reader().read(offset, size)
 
     def release(self):
-        self.reader.release()
+        if self._reader:
+            self._reader.release()
 
     def get_stat(self):
         attr = NodeAttributes()
@@ -85,26 +101,36 @@ class MpgNode:
 
 class NfoNode:
     def __init__(self, path):
+        self._file_system_name = None
         self.path = path
-        self.file_system_name = '_'.join(path.rsplit('/', 3)[-2:]) + '.nfo'
-        if os.path.exists(path + '/info.vdr'):
-            info_vdr = InfoVdr(path + '/info.vdr')
-        elif os.path.exists(path + '/info'):
-            info_vdr = InfoVdr(path + '/info')
-        else:
-           info_vdr = InfoVdr()
-        self.nfo_content = """<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+        self._nfo_content = None
+
+    def file_system_name(self):
+        if not self._file_system_name:
+            self._file_system_name = '_'.join(self.path.rsplit('/', 3)[-2:]) + '.nfo'
+        return self._file_system_name
+
+    def nfo_content(self):
+        if not self._nfo_content:
+            if os.path.exists(self.path + '/info.vdr'):
+                info_vdr = InfoVdr(self.path + '/info.vdr')
+            elif os.path.exists(self.path + '/info'):
+                info_vdr = InfoVdr(self.path + '/info')
+            else:
+               info_vdr = InfoVdr()
+            self._nfo_content = """<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <movie>
   <title>%s</title>
   <plot>%s</plot>
 </movie>
 """ % (info_vdr['T'], info_vdr['D'])
+        return self._nfo_content
 
     def size(self):
-        return len(self.nfo_content)
+        return len(self.nfo_content())
 
     def read(self, offset, size):
-       return self.nfo_content[offset:offset+size]
+       return self.nfo_content()[offset:offset+size]
 
     def get_stat(self):
         attr = NodeAttributes()
@@ -121,8 +147,13 @@ class NfoNode:
 class DirNode:
     def __init__(self, path):
         self.path = path
-        self.file_system_name = path.rsplit('/',1)[1]
         self.cache = []
+        self._file_system_name = None
+
+    def file_system_name(self):
+        if not self._file_system_name:
+            self._file_system_name = self.path.rsplit('/',1)[1]
+        return self._file_system_name
 
     def content(self):
         if not self.cache:

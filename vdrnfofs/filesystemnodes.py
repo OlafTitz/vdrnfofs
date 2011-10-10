@@ -50,12 +50,15 @@ class FileNode(object):
         return self._file_system_name
 
     def get_stat(self):
+        orig = os.lstat(self.path)
         attr = fuse.Stat()
         attr.st_mode = stat.S_IFREG | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
         attr.st_nlink = 1
         attr.st_size = self.size()
         timevalues = self.path.rsplit('/', 1)[1][:16].replace('.', '-').split('-')
         attr.st_mtime = time.mktime(datetime.datetime(*[ int(s) for s in timevalues ]).timetuple())
+        attr.st_uid = orig.st_uid
+        attr.st_gid = orig.st_gid
         return attr
 
 class MpgNode(FileNode):
@@ -155,8 +158,13 @@ class DirNode:
         return False
 
     def get_stat(self):
+        orig = os.lstat(self.path)
         attr = fuse.Stat()
         attr.st_mode = stat.S_IFDIR | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
         attr.st_nlink = 2 + len(self.content())
-        attr.st_mtime = os.path.getmtime(self.path)
+        attr.st_mtime = orig.st_mtime
+        attr.st_atime = orig.st_atime
+        attr.st_ctime = orig.st_ctime
+        attr.st_uid = orig.st_uid
+        attr.st_gid = orig.st_gid
         return attr

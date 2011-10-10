@@ -44,30 +44,42 @@ class TestPathToNodeMapping(unittest.TestCase):
         self.fs = VdrNfoFs()
         self.fs.video = self.video_dir = os.path.abspath(os.path.dirname(__file__) + '/sample_video_dir')
         time_stamp = time.mktime(datetime.datetime(2011,1,1,11,11).timetuple())
+        os.utime(self.fs.video, (time_stamp, time_stamp))
         os.utime(self.fs.video + '/folder', (time_stamp, time_stamp))
 
     def test_root(self):
         attr = self.fs.getattr('/')
         self.assertEqual(stat.S_IFDIR | 0555, attr.st_mode)
+        self.assertEqual(datetime.datetime(2011,1,1,11,11), datetime.datetime.fromtimestamp(attr.st_mtime))
+        self.assertEqual(os.lstat(self.fs.video).st_uid, attr.st_uid)
+        self.assertEqual(os.lstat(self.fs.video).st_gid, attr.st_gid)
         self.assertEqual(2 + 5, attr.st_nlink)
 
     def test_dir(self):
         attr = self.fs.getattr('/folder')
         self.assertEqual(stat.S_IFDIR | 0555, attr.st_mode)
         self.assertEqual(datetime.datetime(2011,1,1,11,11), datetime.datetime.fromtimestamp(attr.st_mtime))
+        self.assertEqual(os.lstat(self.fs.video + '/folder').st_uid, attr.st_uid)
+        self.assertEqual(os.lstat(self.fs.video + '/folder').st_gid, attr.st_gid)
         self.assertEqual(2 + 6, attr.st_nlink)
 
     def test_mpg(self):
         attr = self.fs.getattr('/sample_2008-03-28.20.13.99.99.rec.mpg')
         self.assertEqual(stat.S_IFREG | 0444, attr.st_mode)
         self.assertEqual(datetime.datetime(2008,3,28,20,13), datetime.datetime.fromtimestamp(attr.st_mtime))
+        self.assertEqual(os.lstat(self.fs.video + '/sample/2008-03-28.20.13.99.99.rec').st_uid, attr.st_uid)
+        self.assertEqual(os.lstat(self.fs.video + '/sample/2008-03-28.20.13.99.99.rec').st_gid, attr.st_gid)
 
     def test_nfo(self):
         attr = self.fs.getattr('/sample_2008-03-28.20.13.99.99.rec.nfo')
         self.assertEqual(stat.S_IFREG | 0444, attr.st_mode)
         self.assertEqual(datetime.datetime(2008,3,28,20,13), datetime.datetime.fromtimestamp(attr.st_mtime))
+        self.assertEqual(os.lstat(self.fs.video + '/sample/2008-03-28.20.13.99.99.rec').st_uid, attr.st_uid)
+        self.assertEqual(os.lstat(self.fs.video + '/sample/2008-03-28.20.13.99.99.rec').st_gid, attr.st_gid)
 
     def test_nfo_new(self):
         attr = self.fs.getattr('/sample-vdr1.7_2008-03-28.20.13.10-1.rec.nfo')
         self.assertEqual(stat.S_IFREG | 0444, attr.st_mode)
         self.assertEqual(datetime.datetime(2008,3,28,20,13), datetime.datetime.fromtimestamp(attr.st_mtime))
+        self.assertEqual(os.lstat(self.fs.video + '/sample/2008-03-28.20.13.99.99.rec').st_uid, attr.st_uid)
+        self.assertEqual(os.lstat(self.fs.video + '/sample/2008-03-28.20.13.99.99.rec').st_gid, attr.st_gid)

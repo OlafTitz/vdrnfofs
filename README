@@ -14,17 +14,19 @@ What's this about?
 vdrnfofs creates a virtual Fuse-based file system that maps recordings
 from the Linux Video Disc Recorder (VDR) to *.nfo and *.mpg files.
 
-Those files can then e.g. used by media center applications like.
+Those files can then e.g. be used by media center applications like.
 XBMC or Enna.
 
 Such a thing has been tried previously here:
 
   http://code.google.com/p/vdrfs/
 
-But this project seems to be abandoned, so I've rebuilt vdrnfofs from scratch.
+But this project seems to be abandoned, so I've started with vdrnfofs from
+scratch.
 
-VDR recordings (PS or TS) are simply mapped 1:1 to *.mpg files. If the VDR recording
-is split to multiple files, they are virtually concatenated to a single *.mpg file.
+VDR recordings (PS or TS) are simply mapped 1:1 to *.mpg files. If the VDR
+recording is split to multiple files, they are virtually concatenated to a
+single *.mpg file.
 
 The *.nfo is a XML file with the follwing structure:
 
@@ -64,3 +66,9 @@ e.g.:
 You can also do this in /erc/fstab with:
 
    vdrnfofs    /mnt/vdrnfofs   fuse    video=/var/lib/video 0 0
+
+By default only the user that mounted the vdrnfos can also access it.
+If you want system-wide access to the file system, you should mount it as root
+and pass the option "allow_other" e.g.:
+
+   vdrnfofs /mnt/vdrnfofs -o video=/var/lib/video - o allow_other

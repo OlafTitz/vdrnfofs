@@ -38,19 +38,6 @@ import time
 from concatenated_file_reader import *
 from vdr import *
 
-class NodeAttributes(fuse.Stat):
-    def __init__(self):
-        self.st_mode = 0
-        self.st_ino = 0
-        self.st_dev = 0
-        self.st_nlink = 0
-        self.st_uid = 0
-        self.st_gid = 0
-        self.st_size = 0
-        self.st_atime = 0
-        self.st_mtime = 0
-        self.st_ctime = 0
-
 class FileNode(object):
     def __init__(self, path, extension):
         self.path = path
@@ -63,7 +50,7 @@ class FileNode(object):
         return self._file_system_name
 
     def get_stat(self):
-        attr = NodeAttributes()
+        attr = fuse.Stat()
         attr.st_mode = stat.S_IFREG | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
         attr.st_nlink = 1
         attr.st_size = self.size()
@@ -168,7 +155,7 @@ class DirNode:
         return False
 
     def get_stat(self):
-        attr = NodeAttributes()
+        attr = fuse.Stat()
         attr.st_mode = stat.S_IFDIR | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
         attr.st_nlink = 2 + len(self.content())
         attr.st_mtime = os.path.getmtime(self.path)

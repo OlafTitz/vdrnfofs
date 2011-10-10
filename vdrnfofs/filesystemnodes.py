@@ -171,4 +171,5 @@ class DirNode:
         attr = NodeAttributes()
         attr.st_mode = stat.S_IFDIR | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
         attr.st_nlink = 2 + len(self.content())
+        attr.st_mtime = os.path.getmtime(self.path)
         return attr

@@ -43,6 +43,8 @@ class TestPathToNodeMapping(unittest.TestCase):
     def setUp(self):
         self.fs = VdrNfoFs()
         self.fs.video = self.video_dir = os.path.abspath(os.path.dirname(__file__) + '/sample_video_dir')
+        time_stamp = time.mktime(datetime.datetime(2011,1,1,11,11).timetuple())
+        os.utime(self.fs.video + '/folder', (time_stamp, time_stamp))
 
     def test_root(self):
         attr = self.fs.getattr('/')
@@ -52,6 +54,7 @@ class TestPathToNodeMapping(unittest.TestCase):
     def test_dir(self):
         attr = self.fs.getattr('/folder')
         self.assertEqual(stat.S_IFDIR | 0555, attr.st_mode)
+        self.assertEqual(datetime.datetime(2011,1,1,11,11), datetime.datetime.fromtimestamp(attr.st_mtime))
         self.assertEqual(2 + 6, attr.st_nlink)
 
     def test_mpg(self):

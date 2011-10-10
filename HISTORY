@@ -3,6 +3,7 @@ version 0.8
     (Patch provided by Ed Hein)
   - Fixed license header in source files - it's the BSD licence now!
   - Set mtime of file nodes to recording time (parsed from *.rec)
+  - Set mtime of dir nodes to original directories mtime
   - Added homepage http://projects.vdr-developer.org/projects/vdrnfofs
   - Some micro optimizations
   - Cache the file system nodes user for get_stat() (nodes used for

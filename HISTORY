@@ -1,5 +1,8 @@
 version 0.9
   - Fixed typo in README (Closes #806)
+  - Added note to README, that it might be required to specify
+    the absolute path to vdrnfofs in /etc/fstab (Closes #807)
+
 version 0.8
   - Use cStringIO instead of string concatenation - about 3 times faster
     (Patch provided by Ed Hein)

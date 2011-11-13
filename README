@@ -72,3 +72,9 @@ If you want system-wide access to the file system, you should mount it as root
 and pass the option "allow_other" e.g.:
 
    vdrnfofs /mnt/vdrnfofs -o video=/var/lib/video - o allow_other
+
+If vdrnfofs is not in your path for root (Debian and Ubuntu most likely do not
+include /usr/local/bin in the path), you might need to provide the full path
+in fstab, like e.g.:
+
+   /usr/local/bin/vdrnfofs    /mnt/vdrnfofs   fuse    video=/var/lib/video 0 0

@@ -63,7 +63,7 @@ e.g.:
 
    vdrnfofs /mnt/vdrnfofs -o video=/var/lib/video
 
-You can also do this in /erc/fstab with:
+You can also do this in /etc/fstab with:
 
    vdrnfofs    /mnt/vdrnfofs   fuse    video=/var/lib/video 0 0
 

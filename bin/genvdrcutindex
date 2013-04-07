@@ -1,0 +1,83 @@
+#!/usr/bin/env perl
+# To be run in the recording directory
+
+use strict;
+
+@_ = glob("*.vdr");
+our $isold = scalar(@_) > 0;
+
+our $fps = 25;
+open(F, $isold ? "info.vdr" : "info") || exit 0;
+while (<F>) {
+    /^F\s*([0-9.]+)/ && do {
+	$fps = $1;
+    };
+}
+close F;
+
+our @marks = ();
+if (open(M, $isold ? "marks.vdr" : "marks")) {
+    while (<M>) {
+	/^([0-9]+):([0-9]+):([0-9]+)(\.([0-9]+))?/ && do {
+	    my $p = 3600 * $1 + 60 * $2 + $3;
+	    my $f = (defined $4) ? $4 : 0;
+	    push @marks, $p * $fps + $f;
+	};
+    }
+    close M;
+} else {
+    push @marks, 0;
+}
+
+open(I, $isold ? "index.vdr" : "index") || exit 1;
+open(O, ">cutindex") || exit 1;
+
+our $frame = 0;
+our $cut = shift @marks;
+our ($offset, $offseth, $type, $flag, $number, $res);
+our $mode = 0;
+our $cnum = 0;
+while (sysread(I, $_, 8) == 8) {
+    if ($isold) {
+	($offset, $type, $number, $res) = unpack("LCCS", $_);
+    } else {
+	($offset, $offseth, $flag, $number) = unpack("LCCS", $_);
+	$offset += ($offseth << 32);
+    }
+    if ($cnum < $number) {
+	if ($mode > 0 && $cnum > 0) {
+	    my $x = &fname($cnum);
+	    printf O " %d\n", -s $x;
+	}
+	$cnum = $number;
+	if ($mode > 0 && $cnum > 0) {
+	    printf O "%s 0", &fname($cnum);
+	}
+    }
+    if ($frame >= $cut) {
+	$mode = 1 - $mode;
+	if ($mode) {
+	    printf O "%s %d", &fname($cnum), $offset;
+	} else {
+	    printf O " %d\n", $offset;
+	}
+	$cut = shift @marks;
+	last unless defined($cut);
+    }
+    ++$frame;
+}
+close I;
+if ($mode > 0 && $cnum > 0) {
+    my $x = &fname($cnum);
+    printf O " %d\n", -s $x;
+}
+close O;
+
+sub fname {
+    my $d = $_[0];
+    if ($isold) {
+	return sprintf("%03d.vdr", $d);
+    } else {
+	return sprintf("%05d.ts", $d);
+    }
+}

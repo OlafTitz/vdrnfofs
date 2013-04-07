@@ -36,6 +36,7 @@ import datetime
 import time
 
 from concatenated_file_reader import *
+from indexed_file_reader import *
 from vdr import *
 
 class FileNode(object):
@@ -77,13 +78,22 @@ class MpgNode(FileNode):
 
     def reader(self):
         if not self._reader:
-            self._reader = ConcatenatedFileReader(self.mpeg_files())
+            if os.path.exists(self.path + '/cutindex'):
+                self._reader = IndexedFileReader(self.path)
+            else:
+                self._reader = ConcatenatedFileReader(self.mpeg_files())
         return self._reader
 
     def size(self):
         size = 0
-        for file in self.mpeg_files():
-            size += os.path.getsize(file)
+        if os.path.exists(self.path + '/cutindex'):
+            with open(self.path + '/cutindex', 'r') as f:
+                for l in f:
+                    x = l.split()
+                    size += int(x[2]) - int(x[1])
+        else:
+            for file in self.mpeg_files():
+                size += os.path.getsize(file)
         return size
 
     def read(self, offset, size):

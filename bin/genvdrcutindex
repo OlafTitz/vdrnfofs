@@ -28,6 +28,7 @@ if (open(M, $isold ? "marks.vdr" : "marks")) {
 } else {
     push @marks, 0;
 }
+push @marks, 360 * 24 * 3600 * $fps;
 
 open(I, $isold ? "index.vdr" : "index") || exit 1;
 open(O, ">cutindex") || exit 1;

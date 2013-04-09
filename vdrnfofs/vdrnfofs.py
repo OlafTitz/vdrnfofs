@@ -79,8 +79,7 @@ class VdrNfoFsFile:
                 return -errno.ENOENT
             return self.node.read(offset, size)
         except:
- #           logging.error('VdrFuseFs: Unexpected error for read(%s): %s' % (self.path, format_exception_info()))
-             print('VdrFuseFs: Unexpected error for read(%s): %s' % (self.path, format_exception_info()))
+           logging.error('VdrFuseFs: Unexpected error for read(%s): %s' % (self.path, format_exception_info()))
 
     def release(self, flags):
         self.node.release()

@@ -39,7 +39,7 @@ setup (
     maintainer_email = "vdr@e.tobi.net",
     description = "Access VDR recordings as mpg and nfo files",
     license = "BSD",
-    scripts = ['bin/vdrnfofs'],
+    scripts = ['bin/vdrnfofs', 'bin/gencutindex'],
     packages = ['vdrnfofs'],
     test_suite = "tests",
 )

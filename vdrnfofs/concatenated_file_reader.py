@@ -34,6 +34,9 @@ from cStringIO import StringIO
 class ConcatenatedFileReader:
     def __init__(self, filenames):
         self.files = [(f, os.path.getsize(f)) for f in filenames]
+        self.size = 0
+        for (filename, size) in self.files:
+            self.size += size
         self.current_filename = None
         self.current_file = None
 

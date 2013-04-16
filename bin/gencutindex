@@ -1,5 +1,12 @@
 #!/usr/bin/env perl
-# To be run in the recording directory
+
+# To be run in the recording directory.
+# Generates a file called cutindex, which is some kind of playlist.
+# Each line of the cutindex file specifies a segment of one recording
+# file as "filename start end". The cut recording is the concatenation
+# of all these segments.
+# This works even when no marks[.vdr] is present, then it just lists
+# all recording files from 0 to end.
 
 use strict;
 

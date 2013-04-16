@@ -26,7 +26,8 @@ scratch.
 
 VDR recordings (PS or TS) are simply mapped 1:1 to *.mpg files. If the VDR
 recording is split to multiple files, they are virtually concatenated to a
-single *.mpg file.
+single *.mpg file. If the recording contains cut marks, the cut-out parts
+are omitted, so the *.mpg file is played as cut, see below.
 
 The *.nfo is a XML file with the follwing structure:
 
@@ -78,3 +79,8 @@ include /usr/local/bin in the path), you might need to provide the full path
 in fstab, like e.g.:
 
    /usr/local/bin/vdrnfofs    /mnt/vdrnfofs   fuse    video=/var/lib/video 0 0
+
+To process cut marks, run the provided script 'gencutindex' inside the
+recording directory. This generates a special file called cutindex from the
+marks and index files, which is read by vdrnfofs. To get the recording in uncut
+form, you can remove this file and leave the marks or marks.vdr file alone.

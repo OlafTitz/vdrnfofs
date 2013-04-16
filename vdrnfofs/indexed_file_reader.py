@@ -34,6 +34,7 @@ from cStringIO import StringIO
 class IndexedFileReader:
     def __init__(self, path):
         self.index = []
+        self.size = 0
         with open(path + '/cutindex', 'r') as f:
             offset = 0
             for line in f:
@@ -41,6 +42,7 @@ class IndexedFileReader:
                 len = int(x[2]) - int(x[1])
                 self.index.append([ offset, len, path + '/' + x[0], int(x[1]) ])
                 offset += len
+            self.size = offset
         self.current_filename = None
         self.current_file = None
 

@@ -85,16 +85,7 @@ class MpgNode(FileNode):
         return self._reader
 
     def size(self):
-        size = 0
-        if os.path.exists(self.path + '/cutindex'):
-            with open(self.path + '/cutindex', 'r') as f:
-                for l in f:
-                    x = l.split()
-                    size += int(x[2]) - int(x[1])
-        else:
-            for file in self.mpeg_files():
-                size += os.path.getsize(file)
-        return size
+        return self.reader().size
 
     def read(self, offset, size):
         return self.reader().read(offset, size)

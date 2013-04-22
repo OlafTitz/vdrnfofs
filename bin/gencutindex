@@ -14,13 +14,14 @@ use strict;
 our $isold = scalar(@_) > 0;
 
 our $fps = 25;
-open(F, $isold ? "info.vdr" : "info") || exit 0;
-while (<F>) {
-    /^F\s*([0-9.]+)/ && do {
-	$fps = $1;
-    };
+if (open(F, $isold ? "info.vdr" : "info")) {
+    while (<F>) {
+	/^F\s*([0-9.]+)/ && do {
+	    $fps = $1;
+	};
+    }
+    close F;
 }
-close F;
 
 our @marks = ();
 if (open(M, $isold ? "marks.vdr" : "marks")) {
